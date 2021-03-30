@@ -3,11 +3,11 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "storageAccounts_cluedostorage_name": {
-            "defaultValue": "cluedostorage",
+            "defaultValue": "",
             "type": "String"
         },
         "accounts_cluedocogservice_name": {
-            "defaultValue": "cluedocogservice",
+            "defaultValue": "",
             "type": "String"
         }
     },
