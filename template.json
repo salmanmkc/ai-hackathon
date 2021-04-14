@@ -2,12 +2,16 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "storageAccounts_cluedostorage_name": {
-            "defaultValue": "",
+        "workflows_cleudologicapp_name": {
+            "defaultValue": "cleudologicapp",
             "type": "String"
         },
-        "accounts_cluedocogservice_name": {
-            "defaultValue": "",
+        "storageAccounts_cluedostorage_name": {
+            "defaultValue": "cluedostorage",
+            "type": "String"
+        },
+        "accounts_cluedocogservices_name": {
+            "defaultValue": "cluedocogservices",
             "type": "String"
         }
     },
@@ -16,7 +20,7 @@
         {
             "type": "Microsoft.CognitiveServices/accounts",
             "apiVersion": "2017-04-18",
-            "name": "[parameters('accounts_cluedocogservice_name')]",
+            "name": "[parameters('accounts_cluedocogservices_name')]",
             "location": "uksouth",
             "sku": {
                 "name": "S0"
@@ -24,8 +28,26 @@
             "kind": "CognitiveServices",
             "properties": {
                 "apiProperties": {},
-                "customSubDomainName": "[parameters('accounts_cluedocogservice_name')]",
+                "customSubDomainName": "[parameters('accounts_cluedocogservices_name')]",
                 "publicNetworkAccess": "Enabled"
+            }
+        },
+        {
+            "type": "Microsoft.Logic/workflows",
+            "apiVersion": "2017-07-01",
+            "name": "[parameters('workflows_cleudologicapp_name')]",
+            "location": "uksouth",
+            "properties": {
+                "state": "Enabled",
+                "definition": {
+                    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "triggers": {},
+                    "actions": {},
+                    "outputs": {}
+                },
+                "parameters": {}
             }
         },
         {
@@ -34,7 +56,7 @@
             "name": "[parameters('storageAccounts_cluedostorage_name')]",
             "location": "uksouth",
             "sku": {
-                "name": "Standard_RAGRS",
+                "name": "Standard_LRS",
                 "tier": "Standard"
             },
             "kind": "StorageV2",
@@ -73,7 +95,7 @@
                 "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_cluedostorage_name'))]"
             ],
             "sku": {
-                "name": "Standard_RAGRS",
+                "name": "Standard_LRS",
                 "tier": "Standard"
             },
             "properties": {
@@ -81,7 +103,58 @@
                     "corsRules": []
                 },
                 "deleteRetentionPolicy": {
-                    "enabled": false
+                    "enabled": true,
+                    "days": 7
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/fileServices",
+            "apiVersion": "2021-01-01",
+            "name": "[concat(parameters('storageAccounts_cluedostorage_name'), '/default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_cluedostorage_name'))]"
+            ],
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "properties": {
+                "protocolSettings": {
+                    "smb": {}
+                },
+                "cors": {
+                    "corsRules": []
+                },
+                "shareDeleteRetentionPolicy": {
+                    "enabled": true,
+                    "days": 7
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/queueServices",
+            "apiVersion": "2021-01-01",
+            "name": "[concat(parameters('storageAccounts_cluedostorage_name'), '/default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_cluedostorage_name'))]"
+            ],
+            "properties": {
+                "cors": {
+                    "corsRules": []
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/tableServices",
+            "apiVersion": "2021-01-01",
+            "name": "[concat(parameters('storageAccounts_cluedostorage_name'), '/default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_cluedostorage_name'))]"
+            ],
+            "properties": {
+                "cors": {
+                    "corsRules": []
                 }
             }
         }
