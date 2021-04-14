@@ -7,11 +7,11 @@
             "type": "String"
         },
         "storageAccounts_cluedostorage_name": {
-            "defaultValue": "cluedostorage",
+            "defaultValue": "",
             "type": "String"
         },
         "accounts_cluedocogservices_name": {
-            "defaultValue": "cluedocogservices",
+            "defaultValue": "",
             "type": "String"
         }
     },
